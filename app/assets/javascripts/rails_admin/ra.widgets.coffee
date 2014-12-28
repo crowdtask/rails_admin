@@ -178,7 +178,7 @@ $(document).on 'rails_admin.dom_ready', (e, content) ->
         try
           if instance = window.CKEDITOR.instances[this.id]
             instance.destroy(true)
-        window.CKEDITOR.replace(this, $(this).data('options'))
+        window.CKEDITOR.replace(this, $(this).data('options')['options'])
         $(this).addClass('ckeditored')
 
     $editors = content.find('[data-richtext=ckeditor]').not('.ckeditored')
