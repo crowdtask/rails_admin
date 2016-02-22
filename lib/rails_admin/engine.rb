@@ -16,6 +16,10 @@ module RailsAdmin
     config.action_dispatch.rescue_responses.merge!('RailsAdmin::ActionNotAllowed' => :forbidden)
 
     initializer 'RailsAdmin precompile hook', group: :all do |app|
+      %w(images javascripts stylesheets).each do |sub|
+        app.config.assets.paths << root.join('assets', sub).to_s
+      end
+      
       app.config.assets.precompile += %w(
         rails_admin/rails_admin.js
         rails_admin/rails_admin.css
