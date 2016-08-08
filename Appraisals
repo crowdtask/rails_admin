@@ -6,7 +6,8 @@ appraise "rails-4.0" do
   gem 'capybara', '>= 0.8', group: :test
 
   group :mongoid do
-    gem 'mongoid', '~> 4.0.0'
+    gem 'mongoid', '~> 4.0'
+    gem 'kaminari-mongoid'
     gem 'mongoid-paperclip', '>= 0.0.8', require: 'mongoid_paperclip'
     gem 'carrierwave-mongoid', '>= 0.6.3', require: 'carrierwave/mongoid'
     gem 'refile-mongoid', '>= 0.0.1', platforms: [:ruby_21, :ruby_22, :ruby_23]
@@ -24,7 +25,8 @@ appraise "rails-4.1" do
   gem 'capybara', '>= 0.8', group: :test
 
   group :mongoid do
-    gem 'mongoid', '~> 4.0.0'
+    gem 'mongoid', '~> 4.0'
+    gem 'kaminari-mongoid'
     gem 'mongoid-paperclip', '>= 0.0.8', require: 'mongoid_paperclip'
     gem 'carrierwave-mongoid', '>= 0.6.3', require: 'carrierwave/mongoid'
     gem 'refile-mongoid', '>= 0.0.1', platforms: [:ruby_21, :ruby_22, :ruby_23]
@@ -43,7 +45,8 @@ appraise "rails-4.2" do
   gem 'capybara', '>= 0.8', group: :test
 
   group :mongoid do
-    gem 'mongoid', '~> 4.0.0'
+    gem 'mongoid', '~> 4.0'
+    gem 'kaminari-mongoid'
     gem 'mongoid-paperclip', '>= 0.0.8', require: 'mongoid_paperclip'
     gem 'carrierwave-mongoid', '>= 0.6.3', require: 'carrierwave/mongoid'
     gem 'refile-mongoid', '>= 0.0.1', platforms: [:ruby_21, :ruby_22, :ruby_23]
@@ -56,10 +59,15 @@ appraise "rails-4.2" do
 end
 
 appraise "rails-5.0" do
-  gem 'rails', '~> 5.0.0.beta1'
+  gem 'rails', '~> 5.0.0'
   gem 'sass-rails', '~> 5.0'
-  gem 'devise', github: 'plataformatec/devise'
-  gem 'rack-pjax', github: 'afcapel/rack-pjax'
+  gem 'devise', '~> 4.0'
   gem 'remotipart', github: 'mshibuya/remotipart'
-  gem 'capybara', github: 'jnicklas/capybara', group: :test
+
+  group :mongoid do
+    gem 'mongoid', '>= 6.0.0.beta'
+    gem 'kaminari-mongoid'
+    gem 'mongoid-paperclip', '>= 0.0.8', require: 'mongoid_paperclip'
+    gem 'carrierwave-mongoid', '>= 0.6.3', require: 'carrierwave/mongoid'
+  end
 end

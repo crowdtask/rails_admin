@@ -7,13 +7,12 @@ require 'rack-pjax'
 require 'rails'
 require 'rails_admin'
 require 'remotipart'
-require 'safe_yaml/load'
 
 module RailsAdmin
   class Engine < Rails::Engine
     isolate_namespace RailsAdmin
 
-    config.action_dispatch.rescue_responses.merge!('RailsAdmin::ActionNotAllowed' => :forbidden)
+    config.action_dispatch.rescue_responses['RailsAdmin::ActionNotAllowed'] = :forbidden
 
     initializer 'RailsAdmin precompile hook', group: :all do |app|
       %w(images javascripts stylesheets).each do |sub|

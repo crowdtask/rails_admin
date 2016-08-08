@@ -11,9 +11,9 @@ module RailsAdmin
   end
 
   class ApplicationController < Config.parent_controller.constantize
-    before_filter :_authenticate!
-    before_filter :_authorize!
-    before_filter :_audit!
+    before_action :_authenticate!
+    before_action :_authorize!
+    before_action :_audit!
 
     helper_method :_current_user, :_get_plugin_name
 
@@ -21,13 +21,13 @@ module RailsAdmin
 
     def get_model
       @model_name = to_model_name(params[:model_name])
-      fail(RailsAdmin::ModelNotFound) unless (@abstract_model = RailsAdmin::AbstractModel.new(@model_name))
-      fail(RailsAdmin::ModelNotFound) if (@model_config = @abstract_model.config).excluded?
+      raise(RailsAdmin::ModelNotFound) unless (@abstract_model = RailsAdmin::AbstractModel.new(@model_name))
+      raise(RailsAdmin::ModelNotFound) if (@model_config = @abstract_model.config).excluded?
       @properties = @abstract_model.properties
     end
 
     def get_object
-      fail(RailsAdmin::ObjectNotFound) unless (@object = @abstract_model.get(params[:id]))
+      raise(RailsAdmin::ObjectNotFound) unless (@object = @abstract_model.get(params[:id]))
     end
 
     def to_model_name(param)

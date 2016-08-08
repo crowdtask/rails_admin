@@ -2,6 +2,7 @@ source 'https://rubygems.org'
 
 gem 'appraisal', '>= 2.0'
 gem 'devise'
+gem 'remotipart', github: 'mshibuya/remotipart'
 
 group :active_record do
   platforms :jruby do
@@ -19,7 +20,7 @@ group :active_record do
     gem 'sqlite3', '>= 1.3'
   end
 
-  gem 'paper_trail', '~> 3.0'
+  gem 'paper_trail', '>= 5.0'
 end
 
 group :development, :test do
@@ -42,7 +43,7 @@ group :test do
   gem 'pundit'
   gem 'rack-cache', require: 'rack/cache'
   gem 'rspec-rails', '>= 2.14'
-  gem 'rubocop', '~> 0.31.0'
+  gem 'rubocop', '~> 0.41.2'
   gem 'simplecov', '>= 0.9', require: false
   gem 'timecop', '>= 0.5'
 

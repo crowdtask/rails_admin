@@ -33,7 +33,20 @@ RailsAdmin is a Rails engine that provides an easy-to-use interface for managing
 
 ## Installation
 
-1. On your gemfile: `gem 'rails_admin'`
+1. On your gemfile:
+  - For Rails 5 project:
+
+    ```
+    gem 'remotipart', github: 'mshibuya/remotipart'
+    gem 'rails_admin', '>= 1.0.0.rc'
+    ```
+
+  - For Rails 4 project:
+
+    ```
+    gem 'rails_admin'
+    ```
+
 2. Run `bundle install`
 3. Run `rails g rails_admin:install`
 4. Provide a namespace for the routes when asked
@@ -88,10 +101,9 @@ If you think you found a bug in RailsAdmin, you can [submit an issue](https://gi
 ## Supported Ruby Versions
 This library aims to support and is [tested against][travis] the following Ruby implementations:
 
-* Ruby 1.9.3
-* Ruby 2.0.0
 * Ruby 2.1
 * Ruby 2.2
+* Ruby 2.3
 * [Rubinius][]
 * [JRuby][]
 
