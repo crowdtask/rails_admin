@@ -56,8 +56,8 @@ module RailsAdmin
       instance_eval(&RailsAdmin::Config.audit_with)
     end
 
-    def user_for_paper_trail
-      _current_user.try(:id) || _current_user
+    def rails_admin_controller?
+      true
     end
 
     rescue_from RailsAdmin::ObjectNotFound do
