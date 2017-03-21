@@ -1,7 +1,8 @@
 source 'https://rubygems.org'
 
-gem 'appraisal', '>= 2.0'
+#gem 'appraisal', '>= 2.0'
 gem 'devise'
+gem 'rails', '~> 5.1.0.rc1'
 
 group :active_record do
   platforms :jruby do
@@ -14,7 +15,7 @@ group :active_record do
   end
 
   platforms :ruby, :mswin, :mingw do
-    gem 'mysql2', '~> 0.3.14'
+    gem 'mysql2', '~> 0.4.5'
     gem 'pg', '>= 0.14'
     gem 'sqlite3', '>= 1.3'
   end
@@ -22,6 +23,8 @@ end
 
 group :development, :test do
   gem 'pry', '>= 0.9'
+  gem 'rainbow', github: 'sickill/rainbow'
+
 end
 
 group :test do
@@ -36,6 +39,7 @@ group :test do
   gem 'launchy', '>= 2.2'
   gem 'mini_magick', '>= 3.4'
   gem 'paperclip', ['>= 3.4', '!= 4.3.0']
+  gem 'paper_trail'
   gem 'poltergeist', '~> 1.5'
   gem 'pundit'
   gem 'rack-cache', require: 'rack/cache'
