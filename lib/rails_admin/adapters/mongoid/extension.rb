@@ -25,7 +25,7 @@ module RailsAdmin
               RailsAdmin.config(self, &block)
             end
           end
-          base.prepend(RailsAdminAcceptsNested)
+          self.prepend(RailsAdminAcceptsNested)
         end
 
         def rails_admin_default_object_label_method
