@@ -25,6 +25,7 @@
       searchDelay: 200,
       remote_source: null,
       source: null,
+      float: "left",
       xhr: false
     },
 
@@ -104,6 +105,7 @@
     _getSourceFunction: function(source) {
       var self = this;
       var requestIndex = 0;
+      console.log("gsf", source)
 
       if ($.isArray(source)) {
         return function(request, response) {
@@ -196,12 +198,11 @@
       return $('<div>')
         .addClass('input-group filtering-select col-sm-2')
         .attr('data-input-for', inputFor)
-        .css('float', 'left');
+        .css('float', this.options.float);
     },
 
     _initAutocomplete: function() {
       var self = this;
-
       return this.input.autocomplete({
         delay: this.options.searchDelay,
         minLength: this.options.minLength,
@@ -278,8 +279,8 @@
     },
 
     destroy: function() {
-      this.input.remove();
-      this.button.remove();
+      this.input.autocomplete('destroy');
+      this.input.parent().remove();
       this.element.show();
       $.Widget.prototype.destroy.call(this);
     }

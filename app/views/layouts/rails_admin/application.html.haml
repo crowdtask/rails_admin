@@ -10,7 +10,7 @@
     = javascript_include_tag "rails_admin/rails_admin.js"
     -# Initialize JS simple i18n
     :javascript
-      RailsAdmin.I18n.init('#{I18n.locale}', JSON.parse("#{j I18n.t("admin.js").to_json}"))
+      RailsAdmin.I18n.init('#{I18n.locale}', #{I18n.t("admin.js").to_json.html_safe})
   %body.rails_admin
     #loading.label.label-warning{style: 'display:none; position:fixed; right:20px; bottom:20px; z-index:100000'}= t('admin.loading')
     %nav.navbar.navbar-default.navbar-fixed-top

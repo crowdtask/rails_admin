@@ -151,7 +151,14 @@ $(document).on 'rails_admin.dom_ready', (e, content) ->
       field = type_select.parents('.control-group').first()
       object_select = field.find('select').last()
       urls = type_select.data('urls')
+
       type_select.on 'change', (e) ->
+        console.log("opts1", type_select.val().toLowerCase())
+        object_select.data('options', $("##{type_select.val().toLowerCase()}-js-options").data('options'))
+        object_select.filteringSelect("destroy")
+        console.log("opts", object_select.data('options'))
+        object_select.filteringSelect object_select.data('options')
+
         if $(this).val() is ''
           object_select.html('<option value=""></option>')
         else
@@ -159,7 +166,6 @@ $(document).on 'rails_admin.dom_ready', (e, content) ->
             url: urls[type_select.val()]
             data:
               compact: true
-              all: true
             beforeSend: (xhr) ->
               xhr.setRequestHeader("Accept", "application/json")
             success: (data, status, xhr) ->
