@@ -5,20 +5,25 @@ module RailsAdmin
     module Fields
       module Types
         class HasManyAssociation < RailsAdmin::Config::Fields::Association
-          # Register field type for the type loader
           RailsAdmin::Config::Fields::Types.register(self)
-
           register_instance_option :partial do
             nested_form ? :form_nested_many : :form_filtering_multiselect
           end
 
-          # orderable associated objects
           register_instance_option :orderable do
             false
           end
 
           register_instance_option :inline_add do
             true
+          end
+
+          register_instance_option :multi_select do
+            bindings[:object].respond_to?(:multi_select) ? bindings[:object].send(:multi_select) : false
+          end
+
+          register_instance_option :check_boxes do
+            bindings[:object].respond_to?(:check_boxes) ? bindings[:object].send(:check_boxes) : false
           end
 
           def method_name

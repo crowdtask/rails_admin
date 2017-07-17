@@ -5,8 +5,10 @@ module RailsAdmin
     module Fields
       module Types
         class HasAndBelongsToManyAssociation < RailsAdmin::Config::Fields::Types::HasManyAssociation
-          # Register field type for the type loader
           RailsAdmin::Config::Fields::Types.register(self)
+          def parse_value(value)
+            value
+          end
         end
       end
     end

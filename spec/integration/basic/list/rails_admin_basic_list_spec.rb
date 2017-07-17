@@ -290,7 +290,9 @@ describe 'RailsAdmin Basic List', type: :request do
 
     it 'displays base filters when no filters are present in the params' do
       RailsAdmin.config Player do
-        list { filters([:name, :team]) }
+        list do
+          filters [:name, :team]
+        end
       end
       get index_path(model_name: 'player')
 
@@ -306,6 +308,7 @@ describe 'RailsAdmin Basic List', type: :request do
 
       options = {
         index: 2,
+        select_options: '',
         label: 'Team',
         name: 'team',
         type: 'belongs_to_association',
@@ -581,10 +584,289 @@ describe 'RailsAdmin Basic List', type: :request do
         FactoryGirl.create(:team, color: 'black'),
       ]
     end
+  end
 
-    it 'appends the CSS class to the model row class' do
-      visit index_path(model_name: 'team')
-      expect(page).to have_css('tr.team_row.my_class')
+  describe 'list filter for belongs to  association', js: true do
+    let!(:teams) do
+      [
+        FactoryGirl.create(:team, name: 'Red Devils', color: 'red'),
+        FactoryGirl.create(:team, name: 'Red Rockets', color: 'red'),
+        FactoryGirl.create(:team, name: 'White Walters', color: 'white'),
+        FactoryGirl.create(:team, name: 'Black Magics', color: 'black'),
+      ]
+    end
+
+    let!(:players) do
+      [
+        FactoryGirl.create(:player, name: 'Harry Hipster', team: teams.first),
+        FactoryGirl.create(:player, name: 'Micky Mighty', team: teams[1]),
+        FactoryGirl.create(:player, name: 'Colby James', team: teams[2]),
+        FactoryGirl.create(:player, name: 'Johnny Jangle', team: teams.last),
+      ]
+    end
+
+    describe 'filter by string' do
+      before do
+        RailsAdmin.config do |config|
+          config.model Player do
+            field :name
+            field :team, :belongs_to_association do
+              searchable [:name]
+              filterable true
+            end
+
+            list do
+              filters [:team]
+            end
+          end
+        end
+      end
+
+      it 'allows user to enter text to search associated field' do
+        visit index_path(model_name: 'player')
+
+        teams.each do |team|
+          is_expected.to have_selector(list_item_with_title(team.name))
+        end
+
+        within('span#filters_box') do
+          find(text_filter_selector('team')).set('Red')
+        end
+        click_button('Refresh')
+
+        teams.select { |t| t.name =~ /Red/ }.each do |team|
+          is_expected.to have_selector(list_item_with_title(team.name))
+        end
+
+        teams.reject { |t| t.name =~ /Red/ }.each do |team|
+          is_expected.to_not have_selector(list_item_with_title(team.name))
+        end
+      end
+    end
+
+    describe 'filter by collection' do
+      before do
+        RailsAdmin.config do |config|
+          config.model Player do
+            field :name
+            field :team, :belongs_to_association do
+              searchable [:id]
+              filterable true
+
+              filter_by do
+                Team.all.map { |t| [t.name, t.id] }
+              end
+            end
+
+            list do
+              filters [:team]
+            end
+          end
+        end
+      end
+
+      it 'allows user to choose from select list to search associated field' do
+        visit index_path(model_name: 'player')
+        teams.each do |team|
+          is_expected.to have_selector(list_item_with_title(team.name))
+        end
+
+        within('span#filters_box') do
+          team_select = find(select_filter_selector('team'))
+          team_select.select('Red Devils')
+        end
+        unfiltered_url =  page.current_url
+
+        click_button('Refresh')
+
+        expect(unfiltered_url).to_not eq page.current_url
+
+        teams.select { |t| t.name =~ /Red Devils/ }.each do |team|
+          is_expected.to have_selector(list_item_with_title(team.name))
+        end
+
+        teams.reject { |t| t.name =~ /Red Devils/ }.each do |team|
+          is_expected.to_not have_selector(list_item_with_title(team.name))
+        end
+      end
+    end
+  end
+
+  describe 'list filter for many to many association', js: true do
+    let!(:teams) do
+      [
+        FactoryGirl.create(:team, name: 'Red Devils', color: 'red'),
+        FactoryGirl.create(:team, name: 'Red Rockets', color: 'red'),
+        FactoryGirl.create(:team, name: 'White Walters', color: 'white'),
+        FactoryGirl.create(:team, name: 'Black Magics', color: 'black'),
+      ]
+    end
+
+    let!(:fans) do
+      [
+        FactoryGirl.create(:fan, name: 'Larry', teams: [teams.first]),
+        FactoryGirl.create(:fan, name: 'Moe', teams: teams),
+        FactoryGirl.create(:fan, name: 'Curly', teams: teams.slice(0, 2)),
+        FactoryGirl.create(:fan, name: 'Nicola Tesla', teams: [teams.last]),
+      ]
+    end
+
+    before do
+      RailsAdmin.config do |config|
+        config.model Team do
+          field :name
+          field :fans, :has_and_belongs_to_many_association do
+            searchable [:id]
+            filterable true
+
+            filter_by do
+              Fan.all.map { |c| [c.name, c.id] }
+            end
+
+            multi_select do
+              true
+            end
+            check_boxes do
+              true
+            end
+          end
+
+          list do
+            filters [:fans]
+          end
+        end
+      end
+    end
+
+    describe 'filter_by multi_select check_boxes' do
+      it 'check all associated checkboxes returns all objects' do
+        visit index_path(model_name: 'team')
+
+        within('span#filters_box') do
+          fans.each do |fan|
+            find(checkbox_filter_selector('fans', fan)).set(true)
+          end
+        end
+        unfiltered_url =  page.current_url
+
+        click_button('Refresh')
+
+        expect(unfiltered_url).to_not eq page.current_url
+
+        teams.each do |team|
+          is_expected.to have_selector(list_item_with_title(team.name))
+        end
+      end
+
+      it 'check one associated checkbox return only that objects that are associated' do
+        visit index_path(model_name: 'team')
+
+        larry = fans.detect { |fan| fan.name == 'Larry' }
+        within('span#filters_box') do
+          find(checkbox_filter_selector('fans', larry)).set(true)
+        end
+        click_button('Refresh')
+
+        within('span#filters_box') do
+          expect(find(checkbox_filter_selector('fans', larry)).checked?).to be_truthy
+        end
+
+        larry.teams.each do |team|
+          is_expected.to have_selector(list_item_with_title(team.name))
+        end
+
+        (teams - larry.teams).each do |team|
+          is_expected.to_not have_selector(list_item_with_title(team.name))
+        end
+      end
+    end
+  end
+
+  describe 'filter list for one to many association', js: true do
+    let!(:teams) do
+      [
+        FactoryGirl.create(:team, name: 'Red Devils', color: 'red'),
+        FactoryGirl.create(:team, name: 'Red Rockets', color: 'red'),
+        FactoryGirl.create(:team, name: 'White Walters', color: 'white'),
+        FactoryGirl.create(:team, name: 'Black Magics', color: 'black'),
+      ]
+    end
+
+    let!(:players) do
+      [
+        FactoryGirl.create(:player, name: 'Harry Hipster', team: teams.first),
+        FactoryGirl.create(:player, name: 'Micky Mighty', team: teams[1]),
+        FactoryGirl.create(:player, name: 'Colby James', team: teams[2]),
+        FactoryGirl.create(:player, name: 'Johnny Jangle', team: teams.last),
+      ]
+    end
+
+    before do
+      RailsAdmin.config do |config|
+        config.model Team do
+          field :name
+          field :players, :has_many_association do
+            searchable [:id]
+            filterable true
+
+            filter_by do
+              Player.all.map { |c| [c.name, c.id] }
+            end
+
+            multi_select do
+              true
+            end
+            check_boxes do
+              true
+            end
+          end
+
+          list do
+            filters [:players]
+          end
+        end
+      end
+    end
+
+    describe 'filter_by multi_select check_boxes' do
+      it 'check all associated checkboxes returns all objects' do
+        visit index_path(model_name: 'team')
+
+        within('span#filters_box') do
+          players.each do |player|
+            find(checkbox_filter_selector('players', player)).set(true)
+          end
+        end
+        unfiltered_url =  page.current_url
+
+        click_button('Refresh')
+
+        expect(unfiltered_url).to_not eq page.current_url
+
+        teams.each do |team|
+          is_expected.to have_selector(list_item_with_title(team.name))
+        end
+      end
+
+      it 'check one associated checkbox return only that objects that are associated' do
+        visit index_path(model_name: 'team')
+
+        harry_hipster = players.detect { |player| player.name == 'Harry Hipster' }
+        within('span#filters_box') do
+          find(checkbox_filter_selector('players', harry_hipster)).set(true)
+        end
+        click_button('Refresh')
+
+        within('span#filters_box') do
+          expect(find(checkbox_filter_selector('players', harry_hipster)).checked?).to be_truthy
+        end
+
+        is_expected.to have_selector(list_item_with_title(harry_hipster.team.name))
+
+        (teams - [harry_hipster.team]).each do |team|
+          is_expected.to_not have_selector(list_item_with_title(team.name))
+        end
+      end
     end
   end
 end

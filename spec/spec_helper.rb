@@ -24,6 +24,7 @@ require 'policies'
 require 'database_cleaner'
 require "orm/#{CI_ORM}"
 
+Dir[File.expand_path('../support/**/*.rb', __FILE__)].each { |f| require f }
 Dir[File.expand_path('../shared_examples/**/*.rb', __FILE__)].each { |f| require f }
 
 ActionMailer::Base.delivery_method = :test
@@ -51,9 +52,6 @@ Devise.setup do |config|
   config.stretches = 0
 end
 
-require 'capybara/poltergeist'
-Capybara.javascript_driver = :poltergeist
-
 RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = :expect
@@ -61,10 +59,11 @@ RSpec.configure do |config|
 
   config.include RSpec::Matchers
   config.include RailsAdmin::Engine.routes.url_helpers
-
   config.include Warden::Test::Helpers
-
   config.include Capybara::DSL, type: :request
+  config.include FilterBoxSelectors
+  config.include ListSelectors
+  config.include PoltergeistHelper
 
   config.before do |example|
     DatabaseCleaner.strategy = (CI_ORM == :mongoid || example.metadata[:js]) ? :truncation : :transaction

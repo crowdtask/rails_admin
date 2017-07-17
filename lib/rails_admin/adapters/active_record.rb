@@ -101,13 +101,17 @@ module RailsAdmin
 
         def add(field, value, operator)
           field.searchable_columns.flatten.each do |column_infos|
+            type = column_infos[:type]
             value =
-              if value.is_a?(Array)
+              if field.many_field?
+                type = :has_and_belongs_to_many_association
+                field.parse_value(value)
+              elsif value.is_a?(Array)
                 value.map { |v| field.parse_value(v) }
               else
                 field.parse_value(value)
               end
-            statement, value1, value2 = StatementBuilder.new(column_infos[:column], column_infos[:type], value, operator).to_statement
+            statement, value1, value2 = StatementBuilder.new(column_infos[:column], type, value, operator).to_statement
             @statements << statement if statement.present?
             @values << value1 unless value1.nil?
             @values << value2 unless value2.nil?
@@ -205,6 +209,8 @@ module RailsAdmin
           when :enum                      then build_statement_for_enum
           when :belongs_to_association    then build_statement_for_belongs_to_association
           when :uuid                      then build_statement_for_uuid
+          when :has_many_association                then build_statement_for_has_many_association
+          when :has_and_belongs_to_many_association then build_statement_for_has_and_belongs_to_many_association
           end
         end
 
@@ -220,6 +226,14 @@ module RailsAdmin
         def build_statement_for_belongs_to_association
           return if @value.blank?
           ["(#{@column} = ?)", @value.to_i] if @value.to_i.to_s == @value
+        end
+
+        def build_statement_for_has_many_association
+          in_array_statement
+        end
+
+        def build_statement_for_has_and_belongs_to_many_association
+          in_array_statement
         end
 
         def build_statement_for_string_or_text
@@ -252,6 +266,10 @@ module RailsAdmin
         end
 
         def build_statement_for_enum
+          in_array_statement
+        end
+
+        def in_array_statement
           return if @value.blank?
           ["(#{@column} IN (?))", Array.wrap(@value)]
         end
