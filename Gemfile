@@ -15,7 +15,7 @@ end
 
 group :development, :test do
   gem 'pry', '>= 0.9'
-  gem 'rainbow', github: 'sickill/rainbow'
+  gem 'rainbow'
 
 end
 
