@@ -173,8 +173,8 @@ module RailsAdmin
 
         def generic_unary_operators
           {
-            '_blank' => ["(#{@column} IS NULL OR #{@column} = '')"],
-            '_present' => ["(#{@column} IS NOT NULL AND #{@column} != '')"],
+            '_blank' => @type == :integer ? ["(#{@column} IS NULL)"] : ["(#{@column} IS NULL OR #{@column} = '')"],
+            '_present' => @type == :integer ? ["(#{@column} IS NOT NULL)"] : ["(#{@column} IS NOT NULL AND #{@column} != '')"],
             '_null' => ["(#{@column} IS NULL)"],
             '_not_null' => ["(#{@column} IS NOT NULL)"],
             '_empty' => ["(#{@column} = '')"],
