@@ -73,7 +73,7 @@ module RailsAdmin
         options[:value] = filter_hash['v']
         options[:label] = field.label
         options[:operator] = filter_hash['o']
-        %{$.filters.append(#{options.to_json});}
+        %{$.filters.appendIfNotPresent(#{options.to_json});}
       end.join("\n").html_safe
     end
 

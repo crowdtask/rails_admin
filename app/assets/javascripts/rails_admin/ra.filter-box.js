@@ -42,6 +42,13 @@
       });
 
       $("hr.filters_box:hidden").show('slow');
+    },
+    appendIfNotPresent: function(options) {
+      if ($("#filters_box").hasClass("done")) {
+        return;
+      }
+      $("#filters_box").addClass("done");
+      $.filters.append(options)
     }
   };
 
