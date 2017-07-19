@@ -47,7 +47,9 @@
       if ($("#filters_box").hasClass("done")) {
         return;
       }
-      $("#filters_box").addClass("done");
+      setTimeout(function() {
+        $("#filters_box").addClass("done");
+      }, 50);
       $.filters.append(options)
     }
   };
