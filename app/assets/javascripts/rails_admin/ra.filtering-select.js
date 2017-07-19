@@ -105,7 +105,7 @@
     _getSourceFunction: function(source) {
       var self = this;
       var requestIndex = 0;
-      console.log("gsf", source)
+      //console.log("gsf", source)
 
       if ($.isArray(source)) {
         return function(request, response) {
