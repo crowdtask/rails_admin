@@ -4,7 +4,7 @@
 (function ($, componentFactory) {
 
   var filters;
-  
+
   var filterOptionsTransformer = function (options) {
     return {
       field_label: options['label'],

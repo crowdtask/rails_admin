@@ -99,4 +99,4 @@ $(document).on 'click',  "#remove_filter",(event) ->
   $("#filters_box").html("")
   $("hr.filters_box").hide()
   $(this).parent().siblings("input[type='search']").val("")
-  $(this).parents("form").submit()  
+  $(this).parents("form").submit()
