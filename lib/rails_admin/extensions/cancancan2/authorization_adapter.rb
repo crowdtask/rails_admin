@@ -1,6 +1,6 @@
 module RailsAdmin
   module Extensions
-    module CanCanCan
+    module CanCanCan2
       # This adapter is for the CanCanCan[https://github.com/CanCanCommunity/cancancan] authorization library.
       class AuthorizationAdapter
         # See the +authorize_with+ config method for where the initialization happens.
@@ -17,7 +17,9 @@ module RailsAdmin
         # AbstractModel instance that applies. The third argument is the actual model
         # instance if it is available.
         def authorize(action, abstract_model = nil, model_object = nil)
-          @controller.current_ability.authorize!(action, model_object || abstract_model && abstract_model.model) if action
+          return unless action
+          subject = model_object || abstract_model && abstract_model.model
+          @controller.current_ability.authorize!(subject ? action : :read, subject)
         end
 
         # This method is called primarily from the view to determine whether the given user
@@ -25,7 +27,9 @@ module RailsAdmin
         # This takes the same arguments as +authorize+. The difference is that this will
         # return a boolean whereas +authorize+ will raise an exception when not authorized.
         def authorized?(action, abstract_model = nil, model_object = nil)
-          @controller.current_ability.can?(action, model_object || abstract_model && abstract_model.model) if action
+          return unless action
+          subject = model_object || abstract_model && abstract_model.model
+          @controller.current_ability.can?(subject ? action : :read, subject)
         end
 
         # This is called when needing to scope a database query. It is called within the list
