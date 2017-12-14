@@ -7,8 +7,8 @@
   components.datetime_filter_component = function (options) {
     var component = {};
     component.control = '<select class="switch-additionnal-fieldsets input-sm form-control" name="' + options.operator_name + '">' +
-      shared_elements.between_and_default_options() +
-      '<option ' + helpers.today_filter_selected(options) + ' value="today">' + RailsAdmin.I18n.t("today") + '</option>' +
+      shared_elements.between_and_default_options(options) +
+      '<option ' + helpers.today_operator_selected(options) + ' value="today">' + RailsAdmin.I18n.t("today") + '</option>' +
       '<option ' + helpers.yesterday_operator_selected(options) + ' value="yesterday">' + RailsAdmin.I18n.t("yesterday") + '</option>' +
       '<option ' + helpers.this_week_operator_selected(options) + ' value="this_week">' + RailsAdmin.I18n.t("this_week") + '</option>' +
       '<option ' + helpers.last_week_operator_selected(options) + ' value="last_week">' + RailsAdmin.I18n.t("last_week") + '</option>' +

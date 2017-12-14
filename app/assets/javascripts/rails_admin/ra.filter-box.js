@@ -34,11 +34,10 @@
         .append('&nbsp;' + component.control + '&nbsp;' + (component.additional_control || ''));
 
       $('#filters_box').append($content);
-
       $content.find('.date, .datetime').datetimepicker({
         locale: RailsAdmin.I18n.locale,
         showTodayButton: true,
-        format: filterOptions['datetimepicker_format']
+        format: options['datetimepicker_format']
       });
 
       $("hr.filters_box:hidden").show('slow');
